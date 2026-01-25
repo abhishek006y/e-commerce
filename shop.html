@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop | ShopEase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter;background:#f5f6fa}
+
+/* Header */
+header{background:#fff;padding:15px 30px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.nav{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:700;color:#4f46e5}
+.nav a{margin-left:20px;text-decoration:none;color:#222;font-weight:500}
+
+/* Shop */
+.shop{max-width:1200px;margin:60px auto;padding:0 20px}
+.shop h2{text-align:center;margin-bottom:40px}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:25px;
+}
+.product{
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 8px 25px rgba(0,0,0,.06);
+  overflow:hidden;
+}
+.product img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+.info{padding:18px}
+.info h4{margin-bottom:8px}
+.price{color:#4f46e5;font-weight:700;margin-bottom:12px}
+
+.actions{
+  display:flex;
+  gap:10px;
+}
+button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:14px;
+}
+.view{background:#e0e7ff;color:#4f46e5}
+.cart{background:#4f46e5;color:#fff}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">ShopEase</div>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="cart.html">Cart</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</header>
+
+<section class="shop">
+  <h2>Shop Products</h2>
+
+  <div class="products">
+
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f">
+      <div class="info">
+        <h4>Casual Shirt</h4>
+        <div class="price">₹1,299</div>
+        <div class="actions">
+          <a href="product.html"><button class="view">View</button></a>
+          <button class="cart" onclick="addToCart('Casual Shirt',1299)">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1503602642458-232111445657">
+      <div class="info">
+        <h4>Smart Watch</h4>
+        <div class="price">₹3,999</div>
+        <div class="actions">
+          <a href="product.html"><button class="view">View</button></a>
+          <button class="cart" onclick="addToCart('Smart Watch',3999)">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f">
+      <div class="info">
+        <h4>Headphones</h4>
+        <div class="price">₹2,499</div>
+        <div class="actions">
+          <a href="product.html"><button class="view">View</button></a>
+          <button class="cart" onclick="addToCart('Headphones',2499)">Add</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<script>
+function addToCart(name, price, image){
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // check if item already exists
+  let existing = cart.find(item => item.name === name);
+
+  if(existing){
+    existing.qty += 1;
+  } else {
+    cart.push({
+      name: name,
+      price: price,
+      image: image,
+      qty: 1
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert(name + " added to cart");
+}
+</script>
+
+
+</body>
+</html>
