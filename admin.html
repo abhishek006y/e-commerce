@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<style>
+body{font-family:Arial;background:#f4f6fb;margin:0;padding:0}
+.login,.admin{max-width:1100px;margin:auto;padding:20px}
+.card{background:#fff;padding:20px;border-radius:10px;margin-bottom:20px}
+input,select,button{padding:8px;margin:5px}
+button{background:#4f46e5;color:#fff;border:none;border-radius:5px;cursor:pointer}
+button.danger{background:#dc2626}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center}
+.popup-content{background:#fff;padding:20px;border-radius:10px;width:400px}
+</style>
+</head>
+<body>
+
+<div class="login card" id="loginBox">
+<h2>Admin Login</h2>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div class="admin" id="adminPanel" style="display:none">
+
+<div class="card">
+<h2>Dashboard</h2>
+<p>Total Orders: <span id="totalOrders"></span></p>
+<p>Total Revenue: ₹<span id="totalRevenue"></span></p>
+</div>
+
+<div class="card">
+<h2>Orders</h2>
+<table>
+<thead><tr><th>ID</th><th>Date</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="orderTable"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Product Management</h2>
+<input id="pname" placeholder="Product name">
+<input id="pprice" type="number" placeholder="Price">
+<button onclick="addProduct()">Add</button>
+<div id="productList"></div>
+</div>
+
+<canvas id="chart" width="400"></canvas>
+
+</div>
+
+<div class="popup" id="popup">
+<div class="popup-content">
+<h3>Order Details</h3>
+<div id="popupData"></div>
+<button onclick="closePopup()">Close</button>
+</div>
+</div>
+
+<script>
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = '1234';
+
+function login(){
+  if(username.value===ADMIN_USER && password.value===ADMIN_PASS){
+    loginBox.style.display='none';
+    adminPanel.style.display='block';
+    loadDashboard();
+  } else alert('Invalid login');
+}
+
+function loadDashboard(){
+  const history = JSON.parse(localStorage.getItem('orderHistory'))||[];
+  totalOrders.innerText = history.length;
+  totalRevenue.innerText = history.reduce((s,o)=>s+o.total,0);
+
+  let rows='';
+  history.forEach((o,i)=>{
+    o.status=o.status||'Pending';
+    rows+=`<tr><td>${o.id}</td><td>${o.date}</td><td>₹${o.total}</td>
+    <td><select onchange="changeStatus(${i},this.value)">
+    <option ${o.status==='Pending'?'selected':''}>Pending</option>
+    <option ${o.status==='Shipped'?'selected':''}>Shipped</option>
+    <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
+    </select></td>
+    <td><button onclick="viewOrder(${i})">View</button></td></tr>`;
+  });
+  orderTable.innerHTML=rows;
+  localStorage.setItem('orderHistory',JSON.stringify(history));
+  drawChart(history);
+}
+
+function viewOrder(i){
+  const h=JSON.parse(localStorage.getItem('orderHistory'))[i];
+  const items=JSON.parse(localStorage.getItem('orderSummary'))||[];
+  popupData.innerHTML=`<p>ID:${h.id}</p><p>Total:₹${h.total}</p>`;
+  popup.style.display='flex';
+}
+
+function closePopup(){popup.style.display='none'}
+
+function changeStatus(i,v){
+  const h=JSON.parse(localStorage.getItem('orderHistory'));
+  h[i].status=v;
+  localStorage.setItem('orderHistory',JSON.stringify(h));
+}
+
+function addProduct(){
+  const products=JSON.parse(localStorage.getItem('products'))||[];
+  products.push({name:pname.value,price:pprice.value});
+  localStorage.setItem('products',JSON.stringify(products));
+  showProducts();
+}
+
+function showProducts(){
+  const products=JSON.parse(localStorage.getItem('products'))||[];
+  productList.innerHTML=products.map((p,i)=>`${p.name} ₹${p.price} <button class='danger' onclick='delProduct(${i})'>X</button>`).join('<br>');
+}
+
+function delProduct(i){
+  const p=JSON.parse(localStorage.getItem('products'));
+  p.splice(i,1);
+  localStorage.setItem('products',JSON.stringify(p));
+  showProducts();
+}
+
+function drawChart(h){
+  const c=document.getElementById('chart').getContext('2d');
+  c.clearRect(0,0,400,200);
+  h.forEach((o,i)=>{
+    c.fillRect(i*40,200-o.total/10,30,o.total/10);
+  });
+}
+
+showProducts();
+</script>
+</body>
+</html>
