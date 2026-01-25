@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice</title>
+<style>
+body{font-family:Arial;background:#f4f6fb;padding:40px}
+.invoice{max-width:700px;margin:auto;background:#fff;padding:30px;border-radius:10px}
+h2{text-align:center}
+.row{display:flex;justify-content:space-between;margin:6px 0}
+.total{font-weight:bold;border-top:1px solid #ddd;padding-top:10px;margin-top:10px}
+button{margin-top:20px;padding:10px 20px;border:none;background:#4f46e5;color:#fff;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="invoice">
+  <h2>Invoice</h2>
+  <p><strong>Order ID:</strong> <span id="oid"></span></p>
+<p><strong>Customer Name:</strong> <span id="cname"></span></p>
+<p><strong>Email:</strong> <span id="cemail"></span></p>
+<p><strong>Phone:</strong> <span id="cphone"></span></p>
+<p><strong>Address:</strong> <span id="caddress"></span></p>
+  <div id="items"></div>
+  <p class="total" id="total"></p>
+  <p class="total"><strong>Total Amount:</strong> ₹<span id="totalAmount"></span></p>
+
+  <button onclick="downloadInvoice()">Download Invoice (PDF)</button>
+</div>
+
+  <script>
+window.onload = function () {
+
+  const orderId = localStorage.getItem("orderId");
+  const items = JSON.parse(localStorage.getItem("orderSummary")) || [];
+  const total = localStorage.getItem("orderTotal");
+  const customer = JSON.parse(localStorage.getItem("customerDetails")) || {};
+
+  if (!orderId || items.length === 0 || total === null) {
+    document.body.innerHTML = "<h2>No invoice data found</h2>";
+    return;
+  }
+
+  // order + total
+  document.getElementById("oid").innerText = orderId;
+  document.getElementById("totalAmount").innerText = total;
+
+  // ✅ SAFE customer rendering
+  document.getElementById("cname").innerText = customer.name || "N/A";
+  document.getElementById("cemail").innerText = customer.email || "N/A";
+  document.getElementById("cphone").innerText = customer.phone || "N/A";
+  document.getElementById("caddress").innerText = customer.address || "N/A";
+
+  // items
+  let rows = "";
+  items.forEach(item => {
+    rows += `
+      <div class="row">
+        <span>${item.name} x ${item.quantity}</span>
+        <span>₹${item.price * item.quantity}</span>
+      </div>`;
+  });
+
+  document.getElementById("items").innerHTML = rows;
+};
+
+function downloadInvoice() {
+  window.print();
+}
+</script>
+
+</body>
+</html>

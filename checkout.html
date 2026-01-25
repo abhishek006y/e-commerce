@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout | ShopEase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{margin:0;font-family:Inter;background:#f5f6fa}
+.checkout{
+  max-width:900px;
+  margin:60px auto;
+  background:#fff;
+  padding:30px;
+  border-radius:24px;
+}
+h2{margin-bottom:20px}
+.section{margin-bottom:30px}
+input, select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.payments label{
+  display:block;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+.payment-box{
+  display:none;
+  margin-top:15px;
+}
+button{
+  margin-top:20px;
+  padding:14px 30px;
+  border:none;
+  border-radius:25px;
+  background:#4f46e5;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="checkout">
+  <h2>Checkout</h2>
+
+  <!-- Shipping -->
+  <div class="section">
+    <h3>Shipping Address</h3>
+    <input placeholder="Full Name">
+    <input placeholder="Address">
+    <div class="row">
+      <input placeholder="City">
+      <input placeholder="Pincode">
+    </div>
+    <h3>Customer Details</h3>
+
+<input type="text" id="name" placeholder="Full Name" required>
+<input type="email" id="email" placeholder="Email" required>
+<input type="text" id="phone" placeholder="Phone" required>
+<textarea id="address" placeholder="Delivery Address" required></textarea>
+
+  </div>
+
+  <!-- Payment Options -->
+  <div class="section payments">
+    <h3>Select Payment Method</h3>
+
+    <label>
+      <input type="radio" name="payment" onclick="showPayment('cod')"> Cash on Delivery
+    </label>
+
+    <label>
+      <input type="radio" name="payment" onclick="showPayment('upi')"> UPI
+    </label>
+
+    <label>
+      <input type="radio" name="payment" onclick="showPayment('card')"> Debit / Credit Card
+    </label>
+
+    <label>
+      <input type="radio" name="payment" onclick="showPayment('netbank')"> Net Banking
+    </label>
+
+    <!-- COD -->
+    <div id="cod" class="payment-box">
+      <p>Pay with cash when your order is delivered.</p>
+    </div>
+
+    <!-- UPI -->
+    <div id="upi" class="payment-box">
+      <input placeholder="UPI ID (example@upi)">
+    </div>
+
+    <!-- Card -->
+    <div id="card" class="payment-box">
+      <input placeholder="Card Number">
+      <div class="row">
+        <input placeholder="MM / YY">
+        <input placeholder="CVV">
+      </div>
+    </div>
+
+    <!-- Net Banking -->
+    <div id="netbank" class="payment-box">
+      <select>
+        <option>Select Bank</option>
+        <option>State Bank of India</option>
+        <option>HDFC Bank</option>
+        <option>ICICI Bank</option>
+        <option>Axis Bank</option>
+      </select>
+    </div>
+  </div>
+
+  <button onclick="placeOrder()">Place Order</button>
+</div>
+
+<script>
+let selectedPayment = "";
+
+function showPayment(type){
+  selectedPayment = type;
+
+  document.querySelectorAll('.payment-box').forEach(box=>{
+    box.style.display = "none";
+  });
+  document.getElementById(type).style.display = "block";
+}
+
+function placeOrder(){
+
+  if(selectedPayment === ""){
+    alert("Please select a payment method");
+    return;
+  }
+
+  /* ===== CASH ON DELIVERY ===== */
+  if(selectedPayment === "cod"){
+    success();
+    return;
+  }
+
+  /* ===== UPI VALIDATION ===== */
+  if(selectedPayment === "upi"){
+    const upi = document.querySelector("#upi input").value.trim();
+    const upiPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z]+$/;
+
+    if(!upiPattern.test(upi)){
+      alert("Enter a valid UPI ID (example@upi)");
+      return;
+    }
+    success();
+  }
+
+  /* ===== CARD VALIDATION ===== */
+  if(selectedPayment === "card"){
+    const cardNo = document.querySelector("#card input:nth-child(1)").value.replace(/\s+/g,'');
+    const expiry = document.querySelector("#card input:nth-child(2)").value;
+    const cvv = document.querySelector("#card input:nth-child(3)").value;
+
+    if(cardNo.length !== 16 || isNaN(cardNo)){
+      alert("Enter valid 16-digit card number");
+      return;
+    }
+
+    if(!/^\d{2}\/\d{2}$/.test(expiry)){
+      alert("Expiry format should be MM/YY");
+      return;
+    }
+
+    if(cvv.length !== 3 || isNaN(cvv)){
+      alert("Enter valid 3-digit CVV");
+      return;
+    }
+
+    success();
+  }
+
+  /* ===== NET BANKING VALIDATION ===== */
+  if(selectedPayment === "netbank"){
+    const bank = document.querySelector("#netbank select").value;
+
+    if(bank === "Select Bank"){
+      alert("Please select a bank");
+      return;
+    }
+    success();
+  }
+}
+
+/* ===== SUCCESS FUNCTION ===== */
+function success(){
+  alert("Payment Successful!");
+  localStorage.removeItem("cart");
+  window.location.href = "success.html";
+}
+
+function generateOrderId() {
+  return "ORD" + Math.floor(100000 + Math.random() * 900000);
+}
+
+function success() {
+  const orderId = generateOrderId();
+  localStorage.setItem("orderId", orderId);
+
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  localStorage.setItem("orderSummary", JSON.stringify(cart));
+
+  localStorage.removeItem("cart");
+
+  window.location.href = "success.html";
+}
+function placeOrder() {
+
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (cart.length === 0) {
+    alert("Cart empty");
+    return;
+  }
+
+  let totalAmount = 0;
+  cart.forEach(item => {
+    totalAmount += item.price * item.quantity;
+  });
+
+  const orderId = "ORD" + Date.now();
+
+  // ✅ SAVE EVERYTHING
+  localStorage.setItem("orderId", orderId);
+  localStorage.setItem("orderSummary", JSON.stringify(cart));
+  localStorage.setItem("orderTotal", totalAmount);
+
+  // customer
+  const customer = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    address: document.getElementById("address").value
+  };
+  localStorage.setItem("customerDetails", JSON.stringify(customer));
+
+  // history
+  let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
+  history.push({
+    id: orderId,
+    total: totalAmount,
+    date: new Date().toLocaleString()
+  });
+  localStorage.setItem("orderHistory", JSON.stringify(history));
+
+  // ❌ DO NOT clear all storage
+  localStorage.removeItem("cart");
+
+  window.location.href = "success.html";
+}
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+</body>
+</html>

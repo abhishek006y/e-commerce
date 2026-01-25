@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopEase — Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+    body{background:#f5f6fa;color:#222}
+    a{text-decoration:none;color:inherit}
+
+    /* ===== HEADER ===== */
+    header{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
+    .nav{max-width:1200px;margin:auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-size:22px;font-weight:700;color:#4f46e5}
+    .nav-links{display:flex;gap:22px;font-weight:500}
+    .nav-actions{display:flex;gap:15px;align-items:center}
+    .search{padding:8px 12px;border-radius:20px;border:1px solid #ddd;outline:none}
+    .btn{padding:8px 16px;border-radius:20px;border:none;background:#4f46e5;color:#fff;cursor:pointer}
+
+    /* ===== HERO ===== */
+    .hero{background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff}
+    .hero-content{max-width:1200px;margin:auto;padding:80px 20px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px}
+    .hero h1{font-size:46px;line-height:1.2}
+    .hero p{margin:20px 0;font-size:18px;opacity:.95}
+    .hero img{width:100%;border-radius:20px}
+
+    /* ===== CATEGORIES ===== */
+    .section{max-width:1200px;margin:70px auto;padding:0 20px}
+    .section h2{text-align:center;margin-bottom:40px;font-size:32px}
+    .categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}
+    .cat{background:#fff;padding:30px;border-radius:16px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.06);transition:.3s}
+    .cat:hover{transform:translateY(-6px)}
+
+    /* ===== PRODUCTS ===== */
+    .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+    .product{background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06);overflow:hidden}
+    .product img{width:100%;height:220px;object-fit:cover}
+    .product-info{padding:16px}
+    .product h4{margin-bottom:8px}
+    .price{font-weight:700;color:#4f46e5}
+    .add{margin-top:12px;width:100%}
+
+    /* ===== BANNER ===== */
+    .banner{background:#111;color:#fff;border-radius:24px;padding:50px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+    .banner h3{font-size:32px}
+
+    /* ===== FOOTER ===== */
+    footer{background:#0f172a;color:#cbd5e1;margin-top:80px}
+    .footer{max-width:1200px;margin:auto;padding:50px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px}
+    footer h4{margin-bottom:14px;color:#fff}
+    footer p,footer a{font-size:14px}
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:900px){.hero-content{grid-template-columns:1fr;text-align:center}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">ShopEase</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="#">Categories</a>
+      <a href="contact.html">Contact</a>
+      <a href="products.html"><button class="btn">View Product</button></a>
+      <a href="cart.html"><button class="btn">Cart</button></a>
+
+    </nav>
+    <div class="nav-actions">
+      <input class="search" type="text" placeholder="Search products…" />
+      <a href="login.html"><button class="btn">login</button></a>
+
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <div>
+      <h1>Upgrade Your Style
+        <br>With Premium Products</h1>
+      <p>Shop the latest trends with fast delivery and secure payments.</p>
+      <button class="btn">Shop Now</button>
+    </div>
+    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30" alt="Shopping" />
+  </div>
+</section>
+
+<section class="section">
+  <h2>Top Categories</h2>
+  <div class="categories">
+    <div class="cat">👕 Fashion</div>
+    <div class="cat">📱 Electronics</div>
+    <div class="cat">🏠 Home</div>
+    <div class="cat">⌚ Accessories</div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Featured Products</h2>
+  <div class="products">
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f" />
+      <div class="product-info">
+        <h4>Casual Shirt</h4>
+        <p class="price">₹1,299</p>
+        <button onclick="addToCart(
+  'Casual Shirt',
+  1299,
+  'https://images.unsplash.com/photo-1512436991641-6745cdb1723f'
+)">
+Add to Cart
+</button>
+
+        
+      </div>
+    </div>
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1503602642458-232111445657" />
+      <div class="product-info">
+        <h4>Smart Watch</h4>
+        <p class="price">₹3,999</p>
+        <button class="btn add">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f" />
+      <div class="product-info">
+        <h4>Headphones</h4>
+        <p class="price">₹2,499</p>
+        <button class="btn add">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="banner">
+    <h3>🔥 Big Sale — Up to 50% Off</h3>
+    <button class="btn">Explore Deals</button>
+    
+  </div>
+</section>
+
+<footer>
+  <div class="footer">
+    <div>
+      <h4>ShopEase</h4>
+      <p>Your one‑stop online shopping destination.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="#">About</a><br>
+      <a href="#">Privacy</a><br>
+      <a href="#">Terms</a>
+    </div>
+    <div>
+      <h4>Support</h4>
+      <a href="#">Help Center</a><br>
+      <a href="#">Returns</a><br>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+<script>
+function addToCart(name, price, image){
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // check if item already exists
+  let existing = cart.find(item => item.name === name);
+
+  if(existing){
+    existing.qty += 1;
+  } else {
+    cart.push({
+      name: name,
+      price: price,
+      image: image,
+      qty: 1
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert(name + " added to cart");
+}
+</script>
+
+</body>
+</html>
