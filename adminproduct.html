@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Products Management</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header>Products Management</header>
+<button onclick="logout()" style="float:right;margin:10px">Logout</button>
+
+<div class="box">
+  <input id="name" placeholder="Product Name">
+  <input id="price" placeholder="Price">
+  <input id="img" placeholder="Image URL">
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<table>
+  <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th>Delete</th></tr></thead>
+  <tbody id="productList"></tbody>
+</table>
+
+<script>
+if(localStorage.getItem("adminLoggedIn")!=="true"){location.href="admin-login.html";}
+function logout(){localStorage.removeItem("adminLoggedIn");location.href="admin-login.html";}
+
+let products = JSON.parse(localStorage.getItem("products"))||[];
+
+function renderProducts(){
+  productList.innerHTML="";
+  products.forEach((p,i)=>{
+    productList.innerHTML += `
+      <tr>
+        <td>${p.name}</td>
+        <td>₹${p.price}</td>
+        <td>${p.stock||10}</td>
+        <td><button onclick="del(${i})">Delete</button></td>
+      </tr>
+    `;
+  });
+}
+renderProducts();
+
+function addProduct(){
+  let p = {
+    id: Date.now(),
+    name: name.value,
+    price: Number(price.value),
+    img: img.value,
+    stock:10
+  };
+  products.push(p);
+  localStorage.setItem("products",JSON.stringify(products));
+  renderProducts();
+}
+
+function del(i){
+  products.splice(i,1);
+  localStorage.setItem("products",JSON.stringify(products));
+  renderProducts();
+}
+</script>
+</body>
+</html>

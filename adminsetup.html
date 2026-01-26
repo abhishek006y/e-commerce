@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Setup</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<div class="box">
+  <h2>Create Admin</h2>
+  <input id="username" placeholder="Admin Username">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="createAdmin()">Create Admin</button>
+</div>
+
+<script>
+function createAdmin(){
+  localStorage.setItem("adminUser", username.value);
+  localStorage.setItem("adminPass", password.value);
+  alert("Admin created successfully!");
+}
+</script>
+
+</body>
+</html>

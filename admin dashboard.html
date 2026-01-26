@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>Admin Dashboard</header>
+<button onclick="logout()" style="float:right;margin:10px">Logout</button>
+
+<div class="cards">
+  <div class="card">Total Orders: <span id="ordersCount">0</span></div>
+  <div class="card">Total Products: <span id="productsCount">0</span></div>
+  <div class="card">Revenue: ₹<span id="revenue">0</span></div>
+</div>
+
+<h3>Sales Chart</h3>
+<canvas id="chart" width="400"></canvas>
+
+<script>
+// Protect admin page
+if(localStorage.getItem("adminLoggedIn") !== "true"){
+  location.href = "admin-login.html";
+}
+
+// Logout
+function logout(){
+  localStorage.removeItem("adminLoggedIn");
+  location.href="admin-login.html";
+}
+
+// Data
+let orders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+document.getElementById("ordersCount").innerText = orders.length;
+document.getElementById("productsCount").innerText = products.length;
+document.getElementById("revenue").innerText = orders.reduce((s,o)=>s+o.total,0);
+
+// Chart
+new Chart(document.getElementById("chart"), {
+  type: 'line',
+  data: {
+    labels: orders.map(o=>o.date),
+    datasets: [{
+      label: 'Sales',
+      data: orders.map(o=>o.total),
+      borderColor: '#4f46e5',
+      tension:0.3
+    }]
+  }
+});
+</script>
+</body>
+</html>

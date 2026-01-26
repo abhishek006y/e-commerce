@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Stock Monitoring</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header>Stock Monitoring</header>
+<button onclick="logout()" style="float:right;margin:10px">Logout</button>
+
+<table>
+  <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Status</th><th>Update</th></tr></thead>
+  <tbody id="stockTable"></tbody>
+</table>
+
+<script>
+if(localStorage.getItem("adminLoggedIn")!=="true"){location.href="admin-login.html";}
+function logout(){localStorage.removeItem("adminLoggedIn");location.href="admin-login.html";}
+
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+function renderStock(){
+  stockTable.innerHTML="";
+  products.forEach((p,i)=>{
+    const status = p.stock<=3 ? '<span class="low">Low</span>' : '<span class="ok">Available</span>';
+    stockTable.innerHTML += `
+      <tr>
+        <td>${p.name}</td>
+        <td>₹${p.price}</td>
+        <td><input type="number" id="s${i}" value="${p.stock}"></td>
+        <td>${status}</td>
+        <td><button onclick="updateStock(${i})">Save</button></td>
+      </tr>
+    `;
+  });
+}
+renderStock();
+
+function updateStock(i){
+  products[i].stock = Number(document.getElementById("s"+i).value);
+  localStorage.setItem("products",JSON.stringify(products));
+  renderStock();
+}
+</script>
+</body>
+</html>

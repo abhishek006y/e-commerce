@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Orders Management</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header>Orders Management</header>
+<button onclick="logout()" style="float:right;margin:10px">Logout</button>
+
+<table>
+  <thead>
+    <tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>View Items</th></tr>
+  </thead>
+  <tbody id="ordersTable"></tbody>
+</table>
+
+<script>
+if(localStorage.getItem("adminLoggedIn")!=="true"){location.href="admin-login.html";}
+function logout(){localStorage.removeItem("adminLoggedIn");location.href="admin-login.html";}
+
+let orders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+
+function renderOrders(){
+  ordersTable.innerHTML="";
+  orders.forEach((o,i)=>{
+    ordersTable.innerHTML += `
+      <tr>
+        <td>${o.id}</td>
+        <td>${o.customer.name}</td>
+        <td>₹${o.total}</td>
+        <td>
+          <select onchange="changeStatus(${i},this.value)">
+            <option ${o.status==="Pending"?"selected":""}>Pending</option>
+            <option ${o.status==="Shipped"?"selected":""}>Shipped</option>
+            <option ${o.status==="Delivered"?"selected":""}>Delivered</option>
+          </select>
+        </td>
+        <td><button onclick="viewItems(${i})">View</button></td>
+      </tr>
+    `;
+  });
+}
+renderOrders();
+
+function changeStatus(i,status){
+  orders[i].status=status;
+  localStorage.setItem("orderHistory",JSON.stringify(orders));
+}
+
+function viewItems(i){
+  alert(JSON.stringify(orders[i].items,null,2));
+}
+</script>
+</body>
+</html>
