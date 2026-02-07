@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Order Details</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{font-family:Inter;background:#f5f6fa;margin:0}
+.container{max-width:900px;margin:40px auto;padding:20px}
+.card{background:#fff;padding:20px;border-radius:16px}
+.item{display:flex;justify-content:space-between;margin:8px 0}
+button{margin-top:15px;padding:10px 20px;border:none;border-radius:20px;background:#4f46e5;color:#fff;cursor:pointer}
+.danger{background:#dc2626}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="card" id="orderBox"></div>
+</div>
+
+<script>
+const orderId = localStorage.getItem("selectedOrderId");
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+const order = orders.find(o => o.orderId === orderId);
+
+const box = document.getElementById("orderBox");
+
+if(!order){
+  box.innerHTML = "<p>Order not found</p>";
+}else{
+  let itemsHTML = "";
+  order.items.forEach(i=>{
+    itemsHTML += `
+      <div class="item">
+        <span>${i.name} × ${i.qty}</span>
+        <span>₹${i.price * i.qty}</span>
+      </div>
+    `;
+  });
+
+  box.innerHTML = `
+    <h2>Order Details</h2>
+    <p><strong>Order ID:</strong> ${order.orderId}</p>
+    <p><strong>Date:</strong> ${order.date}</p>
+    <p><strong>Status:</strong> ${order.status}</p>
+    <hr>
+    ${itemsHTML}
+    <hr>
+    <h3>Total: ₹${order.total}</h3>
+
+    ${
+      order.status === "Placed"
+      ? `<button class="danger" onclick="cancelOrder()">Cancel Order</button>`
+      : ""
+    }
+
+    ${
+      order.status === "Delivered"
+      ? `<button class="danger" onclick="returnOrder()">Return Order</button>`
+      : ""
+    }
+
+    <br><br>
+    <button onclick="window.location.href='profile.html'">Back</button>
+  `;
+}
+
+function cancelOrder(){
+  if(confirm("Cancel this order?")){
+    order.status = "Cancelled";
+    localStorage.setItem("orders", JSON.stringify(orders));
+    location.reload();
+  }
+}
+
+function returnOrder(){
+  if(confirm("Return this order?")){
+    order.status = "Returned";
+    localStorage.setItem("orders", JSON.stringify(orders));
+    location.reload();
+  }
+}
+</script>
+</body>
+</html>

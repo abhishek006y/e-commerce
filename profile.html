@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile</title>
+
+<style>
+body{
+  font-family: Inter, sans-serif;
+  background:#f5f6fa;
+  margin:0;
+}
+.container{
+  max-width:1000px;
+  margin:40px auto;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+  margin-bottom:30px;
+}
+h2{ margin-bottom:15px; }
+
+.order{
+  border:1px solid #eee;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:15px;
+}
+.order-header{
+  display:flex;
+  justify-content:space-between;
+  font-weight:600;
+  cursor:pointer;
+}
+.order-body{ display:none; margin-top:10px; }
+.item{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  margin-top:6px;
+}
+.badge{
+  background:#4f46e5;
+  color:#fff;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:12px;
+}
+.logout{
+  background:red;
+  color:#fff;
+  border:none;
+  padding:8px 16px;
+  border-radius:20px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- PROFILE -->
+  <div class="card">
+    <h2>👤 My Profile</h2>
+    <p><strong>Name:</strong> <span id="userName"></span></p>
+    <p><strong>Email:</strong> <span id="userEmail"></span></p>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- ORDERS -->
+   <div class="order-header" onclick="openOrder('${order.orderId}')">
+
+  <div class="card">
+    <h2>📦 Order History</h2>
+    <div id="orderList"></div>
+  </div>
+
+</div>
+
+<script>
+/* ================= LOGIN CHECK ================= */
+if(!localStorage.getItem("loggedIn")){
+  window.location.href = "login.html";
+}
+
+/* ================= USER DATA ================= */
+const user = JSON.parse(localStorage.getItem("user")) || {
+  name:"User",
+  email:"user@example.com"
+};
+document.getElementById("userName").innerText = user.name;
+document.getElementById("userEmail").innerText = user.email;
+
+/* ================= ORDER HISTORY ================= */
+const orderList = document.getElementById("orderList");
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+if(orders.length === 0){
+  orderList.innerHTML = "<p>No orders yet.</p>";
+}else{
+  [...orders].reverse().forEach((order, index)=>{
+    const div = document.createElement("div");
+    div.className="order";
+
+    let itemsHTML="";
+    order.items?.forEach(i=>{
+      itemsHTML+=`
+        <div class="item">
+          <span>${i.name} × ${i.qty}</span>
+          <span>₹${i.price * i.qty}</span>
+        </div>`;
+    });
+
+    div.innerHTML=`
+      <div class="order-header" onclick="toggle(${index})">
+        <span>Order ID: ${order.orderId}</span>
+        <span class="badge">${order.status}</span>
+      </div>
+
+      <div class="order-body" id="body${index}">
+        <p>Date: ${order.date}</p>
+        ${itemsHTML}
+        <hr>
+        <strong>Total: ₹${order.total}</strong>
+      </div>
+    `;
+    orderList.appendChild(div);
+  });
+}
+
+/* ================= TOGGLE ================= */
+function toggle(i){
+  const el=document.getElementById("body"+i);
+  el.style.display = el.style.display==="block"?"none":"block";
+}
+
+/* ================= LOGOUT ================= */
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
+}
+function openOrder(id){
+  localStorage.setItem("viewOrderId", id);
+  window.location.href = "order-details.html";
+}
+
+</script>
+
+</body>
+</html>

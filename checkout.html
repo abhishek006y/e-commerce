@@ -129,152 +129,53 @@ let selectedPayment = "";
 
 function showPayment(type){
   selectedPayment = type;
-
-  document.querySelectorAll('.payment-box').forEach(box=>{
-    box.style.display = "none";
-  });
+  document.querySelectorAll(".payment-box").forEach(b => b.style.display="none");
   document.getElementById(type).style.display = "block";
 }
 
 function placeOrder(){
 
-  if(selectedPayment === ""){
+  /* ===== VALIDATE PAYMENT ===== */
+  if(!selectedPayment){
     alert("Please select a payment method");
     return;
   }
 
-  /* ===== CASH ON DELIVERY ===== */
-  if(selectedPayment === "cod"){
-    success();
+  /* ===== GET CART ===== */
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if(cart.length === 0){
+    alert("Cart is empty");
     return;
   }
 
-  /* ===== UPI VALIDATION ===== */
-  if(selectedPayment === "upi"){
-    const upi = document.querySelector("#upi input").value.trim();
-    const upiPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z]+$/;
-
-    if(!upiPattern.test(upi)){
-      alert("Enter a valid UPI ID (example@upi)");
-      return;
-    }
-    success();
-  }
-
-  /* ===== CARD VALIDATION ===== */
-  if(selectedPayment === "card"){
-    const cardNo = document.querySelector("#card input:nth-child(1)").value.replace(/\s+/g,'');
-    const expiry = document.querySelector("#card input:nth-child(2)").value;
-    const cvv = document.querySelector("#card input:nth-child(3)").value;
-
-    if(cardNo.length !== 16 || isNaN(cardNo)){
-      alert("Enter valid 16-digit card number");
-      return;
-    }
-
-    if(!/^\d{2}\/\d{2}$/.test(expiry)){
-      alert("Expiry format should be MM/YY");
-      return;
-    }
-
-    if(cvv.length !== 3 || isNaN(cvv)){
-      alert("Enter valid 3-digit CVV");
-      return;
-    }
-
-    success();
-  }
-
-  /* ===== NET BANKING VALIDATION ===== */
-  if(selectedPayment === "netbank"){
-    const bank = document.querySelector("#netbank select").value;
-
-    if(bank === "Select Bank"){
-      alert("Please select a bank");
-      return;
-    }
-    success();
-  }
-}
-
-/* ===== SUCCESS FUNCTION ===== */
-function success(){
-  alert("Payment Successful!");
-  localStorage.removeItem("cart");
-  window.location.href = "success.html";
-}
-
-function generateOrderId() {
-  return "ORD" + Math.floor(100000 + Math.random() * 900000);
-}
-
-function success() {
-  const orderId = generateOrderId();
-  localStorage.setItem("orderId", orderId);
-
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  localStorage.setItem("orderSummary", JSON.stringify(cart));
-
-  localStorage.removeItem("cart");
-
-  window.location.href = "success.html";
-}
-function placeOrder() {
-
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  if (cart.length === 0) {
-    alert("Cart empty");
-    return;
-  }
-
-  let totalAmount = 0;
-  cart.forEach(item => {
-    totalAmount += item.price * item.quantity;
+  /* ===== CALCULATE TOTAL ===== */
+  let total = 0;
+  cart.forEach(item=>{
+    total += item.price * item.qty;
   });
 
-  const orderId = "ORD" + Date.now();
-
-  // ✅ SAVE EVERYTHING
-  localStorage.setItem("orderId", orderId);
-  localStorage.setItem("orderSummary", JSON.stringify(cart));
-  localStorage.setItem("orderTotal", totalAmount);
-
-  // customer
-  const customer = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value,
-    address: document.getElementById("address").value
+  /* ===== CREATE ORDER ===== */
+  const order = {
+    orderId: "ORD" + Date.now(),
+    date: new Date().toLocaleString(),
+    items: cart,
+    total: total,
+    status: "Placed"
   };
-  localStorage.setItem("customerDetails", JSON.stringify(customer));
 
-  // history
-  let history = JSON.parse(localStorage.getItem("orderHistory")) || [];
-  history.push({
-    id: orderId,
-    total: totalAmount,
-    date: new Date().toLocaleString()
-  });
-  localStorage.setItem("orderHistory", JSON.stringify(history));
+  /* ===== SAVE ORDER ===== */
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  orders.push(order);
+  localStorage.setItem("orders", JSON.stringify(orders));
 
-  // ❌ DO NOT clear all storage
+  /* ===== CLEAR CART ===== */
   localStorage.removeItem("cart");
 
-  window.location.href = "success.html";
+  alert("Order placed successfully!");
+  window.location.href = "profile.html";
 }
-
-
-
-
-
-
-
-
-
-
-
 </script>
+
 
 
 
